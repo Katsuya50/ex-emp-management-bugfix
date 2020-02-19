@@ -23,6 +23,7 @@ public class InsertAdministratorForm {
 			message="半角英文字、半角数字をそれぞれ1文字以上使用し、8文字以上16文字以下で入力してください")
 	private String password;
 	/**	確認用パスワード */
+	@NotBlank(message="確認用パスワードは必須です。")
 	private String confirmPassword;
 	
 	public String getName() {
