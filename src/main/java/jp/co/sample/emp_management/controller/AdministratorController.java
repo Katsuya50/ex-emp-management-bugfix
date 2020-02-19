@@ -79,6 +79,7 @@ public class AdministratorController {
 		BeanUtils.copyProperties(form, administrator);
 		//入力されたメールアドレスが登録済であれば管理者登録画面に戻る
 		if(administratorService.searchAdministrator(administrator.getMailAddress()) != null) {
+			result.rejectValue("mailAddress", null, "入力されたメールアドレスは既に使用されています。");
 			return toInsert();
 		}
 		
