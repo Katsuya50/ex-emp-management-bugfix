@@ -82,7 +82,6 @@ public class AdministratorController {
 			result.rejectValue("mailAddress", null, "入力されたメールアドレスは既に使用されています。");
 			return toInsert();
 		}
-		
 		administratorService.insert(administrator);
 		return "redirect:/";
 	}

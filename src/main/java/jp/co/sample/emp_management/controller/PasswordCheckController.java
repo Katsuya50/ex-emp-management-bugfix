@@ -30,9 +30,9 @@ public class PasswordCheckController {
 	Map<String, String> map = new HashMap<>();
 	String errorMessage = null;
 	if(password != null && confirmPassword.equals(password)) {
-		errorMessage = "「確認用パスワード入力OK!」";
+		errorMessage = "確認用パスワード入力OK!";
 	}else {
-		errorMessage = "「パスワードが一致していません」";
+		errorMessage = "パスワードが一致していません";
 	}
 	map.put("errorMessage", errorMessage);
 	return map;
