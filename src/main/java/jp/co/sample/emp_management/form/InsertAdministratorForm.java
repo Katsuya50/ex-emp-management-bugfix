@@ -22,6 +22,9 @@ public class InsertAdministratorForm {
 	@Pattern(regexp="^(?=.*[0-9])(?=.*[a-zA-Z])[0-9a-zA-Z]{8,16}$",
 			message="半角英文字、半角数字をそれぞれ1文字以上使用し、8文字以上16文字以下で入力してください")
 	private String password;
+	/**	確認用パスワード */
+	private String confirmPassword;
+	
 	public String getName() {
 		return name;
 	}
@@ -40,10 +43,16 @@ public class InsertAdministratorForm {
 	public void setPassword(String password) {
 		this.password = password;
 	}
+	public String getConfirmPassword() {
+		return confirmPassword;
+	}
+	public void setConfirmPassword(String confirmPassword) {
+		this.confirmPassword = confirmPassword;
+	}
 	@Override
 	public String toString() {
 		return "InsertAdministratorForm [name=" + name + ", mailAddress=" + mailAddress + ", password=" + password
-				+ "]";
+				+ ", confirmPassword=" + confirmPassword + "]";
 	}
 	
 }
