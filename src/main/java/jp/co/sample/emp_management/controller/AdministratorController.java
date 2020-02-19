@@ -28,7 +28,7 @@ public class AdministratorController {
 
 	@Autowired
 	private AdministratorService administratorService;
-	
+
 	@Autowired
 	private HttpSession session;
 
@@ -41,8 +41,8 @@ public class AdministratorController {
 	public InsertAdministratorForm setUpInsertAdministratorForm() {
 		return new InsertAdministratorForm();
 	}
-	
-	//  (SpringSecurityに任せるためコメントアウトしました)
+
+	// (SpringSecurityに任せるためコメントアウトしました)
 	@ModelAttribute
 	public LoginForm setUpLoginForm() {
 		return new LoginForm();
@@ -64,24 +64,23 @@ public class AdministratorController {
 	/**
 	 * 管理者情報を登録します.
 	 * 
-	 * @param form
-	 *            管理者情報用フォーム
+	 * @param form 管理者情報用フォーム
 	 * @return ログイン画面へリダイレクト
 	 */
 	@RequestMapping("/insert")
-	public String insert(@Validated InsertAdministratorForm form,
-			BindingResult result) {
+	public String insert(@Validated InsertAdministratorForm form, BindingResult result) {
+		if (administratorService.searchAdministrator(form.getMailAddress()) != null) {
+			result.rejectValue("mailAddress", null, "入力されたメールアドレスは既に使用されています。");
+		}
+		if (form.getConfirmPassword() != null && form.getPassword() != form.getConfirmPassword()) {
+			result.rejectValue("confirmPassword", null, "パスワードが一致していません。");
+		}
 		if(result.hasErrors()) {
 			return toInsert();
 		}
 		Administrator administrator = new Administrator();
 		// フォームからドメインにプロパティ値をコピー
 		BeanUtils.copyProperties(form, administrator);
-		//入力されたメールアドレスが登録済であれば管理者登録画面に戻る
-		if(administratorService.searchAdministrator(administrator.getMailAddress()) != null) {
-			result.rejectValue("mailAddress", null, "入力されたメールアドレスは既に使用されています。");
-			return toInsert();
-		}
 		administratorService.insert(administrator);
 		return "redirect:/";
 	}
@@ -102,10 +101,8 @@ public class AdministratorController {
 	/**
 	 * ログインします.
 	 * 
-	 * @param form
-	 *            管理者情報用フォーム
-	 * @param result
-	 *            エラー情報格納用オブッジェクト
+	 * @param form   管理者情報用フォーム
+	 * @param result エラー情報格納用オブッジェクト
 	 * @return ログイン後の従業員一覧画面
 	 */
 	@RequestMapping("/login")
@@ -118,7 +115,7 @@ public class AdministratorController {
 		session.setAttribute("administratorName", administrator.getName());
 		return "forward:/employee/showList";
 	}
-	
+
 	/////////////////////////////////////////////////////
 	// ユースケース：ログアウトをする
 	/////////////////////////////////////////////////////
@@ -132,5 +129,5 @@ public class AdministratorController {
 		session.invalidate();
 		return "redirect:/";
 	}
-	
+
 }
