@@ -1,5 +1,9 @@
 package jp.co.sample.emp_management.form;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+
 /**
  * 管理者情報登録時に使用するフォーム.
  * 
@@ -8,10 +12,15 @@ package jp.co.sample.emp_management.form;
  */
 public class InsertAdministratorForm {
 	/** 名前 */
+	@NotBlank(message="氏名は必須です。")
 	private String name;
 	/** メールアドレス */
+	@NotBlank(message="メールアドレスは必須です。")
+	@Email(message="メールアドレスはの形式が不正です。")
 	private String mailAddress;
 	/** パスワード */
+	@Pattern(regexp="^(?=.*[0-9])(?=.*[a-zA-Z])[0-9a-zA-Z]{8,16}$",
+			message="半角英文字、半角数字をそれぞれ1文字以上使用し、8文字以上16文字以下で入力してください")
 	private String password;
 	public String getName() {
 		return name;
