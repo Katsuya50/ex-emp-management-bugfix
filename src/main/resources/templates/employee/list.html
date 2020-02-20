@@ -54,6 +54,17 @@
 		<ol class="breadcrumb">
 			<li class="active"><a href="list.html" th:href="@{/employee/showList}">従業員リスト</a></li>
 		</ol>
+		
+		<div id="search">
+			<form action="list.html" th:action="@{/employee/search}" method="post"
+				th:object="${searchEmployeeForm}">
+			<div>
+				従業員検索<span th:text="${message}" class="error-messages"></span>
+			</div>
+				<input name="searchName" th:field="*{searchName}" placeholder="従業員名">
+				<button>検索</button>
+			</form>
+		</div>
 
 		<!-- table -->
 		<div class="row">

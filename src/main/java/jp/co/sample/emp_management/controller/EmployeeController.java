@@ -9,8 +9,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jp.co.sample.emp_management.domain.Employee;
+import jp.co.sample.emp_management.form.SearchEmployeeForm;
 import jp.co.sample.emp_management.form.UpdateEmployeeForm;
 import jp.co.sample.emp_management.service.EmployeeService;
 
@@ -35,6 +37,16 @@ public class EmployeeController {
 	@ModelAttribute
 	public UpdateEmployeeForm setUpForm() {
 		return new UpdateEmployeeForm();
+	}
+	
+	/**
+	 * 使用する検索用フォームオブジェクトをリクエストスコープに格納する.
+	 * 
+	 * @return フォーム
+	 */
+	@ModelAttribute
+	public SearchEmployeeForm setUpSearchForm() {
+		return new SearchEmployeeForm();
 	}
 
 	/////////////////////////////////////////////////////
@@ -91,5 +103,24 @@ public class EmployeeController {
 		employee.setDependentsCount(form.getIntDependentsCount());
 		employeeService.update(employee);
 		return "redirect:/employee/showList";
+	}
+	
+	@RequestMapping("/search")
+	public String search(SearchEmployeeForm searchEmployeeForm, RedirectAttributes redirectAttributes, Model model) {
+		System.out.println(searchEmployeeForm.getSearchName());
+		if(searchEmployeeForm.getSearchName().equals("")) {
+			System.out.println(1);
+			return "redirect:/employee/showList";
+		}else {
+			List<Employee> employeeList = employeeService.searchByName(searchEmployeeForm.getSearchName());
+			System.out.println(employeeList.size());
+			if(employeeList.size() == 0) {
+				redirectAttributes.addFlashAttribute("message", "「検索結果がありません」");
+				return "redirect:/employee/showList";
+			}else {
+				model.addAttribute("employeeList", employeeList);
+				return "employee/list";
+			}
+		}
 	}
 }
