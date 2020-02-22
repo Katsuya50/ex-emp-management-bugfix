@@ -1,5 +1,6 @@
 package jp.co.sample.emp_management.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,6 +63,7 @@ public class EmployeeController {
 	public String showList(Model model) {
 		List<Employee> employeeList = employeeService.showList();
 		model.addAttribute("employeeList", employeeList);
+		setEmployeeName(model);
 		return "employee/list";
 	}
 
@@ -119,8 +121,24 @@ public class EmployeeController {
 				return "redirect:/employee/showList";
 			}else {
 				model.addAttribute("employeeList", employeeList);
+				setEmployeeName(model);
 				return "employee/list";
 			}
 		}
 	}
+	
+	/**
+	 * オートコンプリート用に従業員情報を格納するメソッド.
+	 * 
+	 * @param model リクエストスコープ
+	 */
+	public void setEmployeeName(Model model) {
+		List<Employee> employeeList = employeeService.showList();
+		List<String> employees = new ArrayList<>();
+		for(Employee emp: employeeList) {
+			employees.add(emp.getName());
+		}
+		model.addAttribute("employees", employees);
+	}
+	
 }

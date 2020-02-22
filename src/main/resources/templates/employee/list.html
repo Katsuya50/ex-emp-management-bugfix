@@ -63,6 +63,7 @@
 				従業員検索<span th:text="${message}" class="error-messages"></span>
 			</div>
 				<input id="search-name" name="searchName" th:field="*{searchName}" placeholder="従業員名">
+				<input id="emp" type="hidden" th:value="${employees}">
 				<button>検索</button>
 			</form>
 		</div>
@@ -112,6 +113,13 @@
 	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
   	<script src="/js/bootstrap.min.js"></script>
-	<script src="/js/search.js"></script>
+	<script>
+		$(function(){
+			console.log($("#emp").val());
+			$("#search-name").autocomplete({
+				source: $("#emp").val()
+			});
+		});
+	</script>
 </body>
 </html>
