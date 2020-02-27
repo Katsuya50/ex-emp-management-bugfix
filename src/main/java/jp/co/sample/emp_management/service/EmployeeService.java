@@ -1,8 +1,12 @@
 package jp.co.sample.emp_management.service;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +28,7 @@ public class EmployeeService {
 	
 	/**
 	 * 従業員情報を全件取得します.
+	 * ページング機能で使わなくなりました
 	 * 
 	 * @return　従業員情報一覧
 	 */
@@ -54,6 +59,25 @@ public class EmployeeService {
 	}
 	
 	/**
+	 * 従業員情報を登録します.
+	 * 
+	 * @param employee　登録した従業員情報
+	 */
+	public Employee insert(Employee employee) {
+		return employeeRepository.insert(employee);
+	}
+
+	/**
+	 * メールアドレスから従業員情報を取得します.
+	 * 
+	 * @param mailAddress メールアドレス
+	 * @return 従業員情報 存在しない場合はnullを返します
+	 */
+	public Employee findByMailAddress(String mailAddress) {
+		return employeeRepository.findByMailAddress(mailAddress);
+	}
+	
+	/**
 	 * 従業員の情報を名前からあいまい検索する処理.
 	 * 
 	 * @param name 検索名
@@ -62,4 +86,56 @@ public class EmployeeService {
 	public List<Employee> searchByName(String name){
 		return employeeRepository.findByName(name);
 	}
+	
+	/**
+	 * ページング用メソッド.
+	 * @param page 表示させたいページ数
+	 * @param size １ページに表示させる従業員数
+	 * @param employeeList 絞り込み対象リスト
+	 * @return １ページに表示されるサイズ分の従業員一覧情報
+	 */
+	public Page<Employee> showListPaging(int page, int size, List<Employee> employeeList) {
+	    // 表示させたいページ数を-1しなければうまく動かない
+	    page--;
+	    // どの従業員から表示させるかというカウント値
+	    int startItemCount = page * size;
+	    // 絞り込んだ後の従業員リストが入る変数
+	    List<Employee> list;
+
+	    if (employeeList.size() < startItemCount) {
+	    	// (ありえないが)もし表示させたい従業員カウントがサイズよりも大きい場合は空のリストを返す
+	        list = Collections.emptyList();
+	    } else {
+	    	// 該当ページに表示させる従業員一覧を作成
+	        int toIndex = Math.min(startItemCount + size, employeeList.size());
+	        list = employeeList.subList(startItemCount, toIndex);
+	    }
+
+	    // 上記で作成した該当ページに表示させる従業員一覧をページングできる形に変換して返す
+	    Page<Employee> employeePage
+	      = new PageImpl<Employee>(list, PageRequest.of(page, size), employeeList.size());
+	    return employeePage;
+	}
+
+	/**
+	 * オートコンプリート用にJavaScriptの配列の中身を文字列で作ります.
+	 * 
+	 * @param employeeList 従業員一覧
+	 * @return　オートコンプリート用JavaScriptの配列の文字列
+	 * 　　　　　(例) "渡辺三郎","佐藤次郎","山本八郎","小林九子"
+	 */
+	public StringBuilder getEmployeeListForAutocomplete(List<Employee> employeeList) {
+		StringBuilder employeeListForAutocomplete = new StringBuilder();
+		for (int i = 0; i < employeeList.size(); i++) {
+			if (i != 0) {
+				employeeListForAutocomplete.append(",");
+			}
+			Employee employee = employeeList.get(i);
+			employeeListForAutocomplete.append("\"");
+			employeeListForAutocomplete.append(employee.getName());
+			employeeListForAutocomplete.append("\"");
+		}
+		return employeeListForAutocomplete;
+	}
+	
 }
